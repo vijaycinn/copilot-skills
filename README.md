@@ -9,6 +9,7 @@ A collection of [GitHub Copilot CLI](https://githubnext.com/projects/copilot-cli
 | Skill | Description | Audience |
 |-------|-------------|----------|
 | [`territory-insights`](./territory-insights/) | Generates a fully-grounded quarterly territory leadership update using live MSX pipeline, milestones, HoK activities, and WorkIQ customer emails/meetings. Outputs an 8-section HTML report ready to paste into Outlook. | Field SEs / DSEs |
+| [`se-activity`](./se-activity/) | Drafts and classifies MSX SE Activity entries from meeting notes, emails, or Teams conversations. Maps work to the correct FY26 SE Task Category and MSX scope (Account / Opportunity / Milestone). | Field SEs / DSEs |
 
 _More skills coming. PRs welcome._
 
@@ -87,15 +88,19 @@ To create your personal config:
 ```
 copilot-skills/
 ├── README.md                          ← you are here
-└── territory-insights/
+├── territory-insights/
+│   ├── README.md                      ← quick start + install
+│   ├── SKILL.md                       ← skill definition (read by Copilot CLI)
+│   ├── territory_insights_instructions.md  ← full user guide
+│   ├── .gitignore
+│   └── references/
+│       ├── account-spotlight-format.md    ← Section 7 format guide
+│       ├── html-template.md               ← HTML output template
+│       └── ai-foundry-accounts.md         ← blank account engagement template
+└── se-activity/
     ├── README.md                      ← quick start + install
     ├── SKILL.md                       ← skill definition (read by Copilot CLI)
-    ├── territory_insights_instructions.md  ← full user guide
-    ├── .gitignore
-    └── references/
-        ├── account-spotlight-format.md    ← Section 7 format guide
-        ├── html-template.md               ← HTML output template
-        └── ai-foundry-accounts.md         ← blank account engagement template
+    └── .gitignore
 ```
 
 ---
