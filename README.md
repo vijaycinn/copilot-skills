@@ -31,6 +31,29 @@ All skills in this repo require:
 
 ---
 
+## MCP / Dependency Matrix
+
+No extra Copilot **plugin** is required beyond installing the skill folder itself into `~/.copilot/skills/`. The main runtime dependencies are **MCP servers** plus a few optional local tools.
+
+| Skill | Required MCPs | Optional MCPs / tools | Notes |
+|-------|---------------|------------------------|-------|
+| [`territory-insights`](./territory-insights/) | **MSX MCP**, **WorkIQ MCP** | **Sales Home MCP** (`sales-home`) for MoM Apps + AI ACR signals; Python 3.8+ for CSV validation; Excel/CSV exports; Outlook/Mail permissions for draft creation | Best for live territory updates plus customer voice and milestone context |
+| [`msx-territory-signal`](./msx-territory-signal/) | None for core local-file analysis | **MSX MCP** for opp / milestone context; **WorkIQ MCP** for chatter and meeting grounding; **Sales Home MCP** (`sales-home`) for territory-scoped MoM ACR ranking; Python 3.8+; account mapping XLSX/CSV; Outlook/Mail permissions for drafts | Core flow can run from local exports, but MCPs make it much more actionable |
+| [`se-activity`](./se-activity/) | **MSX MCP** | **WorkIQ MCP** to pull notes from email / meetings / Teams | Can work from pasted notes alone, but MSX MCP is needed to validate scope cleanly |
+
+### Quick verification before first run
+
+1. Run `skills` and confirm the skill is listed
+2. Run `/mcp` and confirm the required servers are connected
+3. If using local-file workflows, confirm Python is on PATH and you have the MSX exports saved locally
+
+**Current MCP names used in this repo:**
+- `msx-mcp`
+- `workiq`
+- `sales-home` *(optional; Sales Home / MSXi ACR signal layer)*
+
+---
+
 ## Installation
 
 1. **Clone or download this repo**
