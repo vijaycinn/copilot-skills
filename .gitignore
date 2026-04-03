@@ -7,6 +7,10 @@ desktop.ini
 .vscode/
 *.swp
 
+# Python
+__pycache__/
+*.pyc
+
 # Personal override files (per skill)
 my-config.md
 my-accounts.md
