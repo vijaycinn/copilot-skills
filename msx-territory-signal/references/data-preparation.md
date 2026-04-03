@@ -69,6 +69,8 @@ A spreadsheet mapping each account (by name or TPID) to:
 
 This file is typically maintained by your ATU or STU admin. In Vijay's territory, this is `Account Sales Team ACR.xlsx`.
 
+> **Territory-first rule:** this file should include a territory / ATU field. If it does not, the skill should stop and ask the user which territory IDs to scope to before any account analysis begins.
+
 ### How to Get It
 
 **Preferred source for a new SE or a different territory:**
@@ -97,6 +99,8 @@ Fallback options:
 | `Primary CE` | `NICOLEPIERCE, JRUMORE, AMDEVI` | CE team / specialist ownership |
 
 > **For other SEs:** Column names may differ by dashboard export or segment. Look for headers containing `DSS`, `SSP`, `AE`, `DAE`, `DSE`, `CE`, `CSA`, or segment-specific role labels.
+
+If the export does not include a clear territory field, fix that first or tell the skill the explicit territory IDs up front. Do **not** run a broad all-account analysis and narrow later.
 
 ### Reading XLSX on Windows
 

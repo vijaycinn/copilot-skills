@@ -2,7 +2,7 @@
 name: territory-insights
 description: "Generates quarterly territory leadership updates for Microsoft field SEs by orchestrating MSX MCP and WorkIQ MCP data sources with optional local CSV analysis. Auto-detects the invoking SE's identity and territory from MSX + M365. Produces insights covering GitHub Copilot, App Dev Modernization, Azure AI/Foundry, competitive intelligence, account spotlights, and prescriptive next-quarter recommendations — all grounded in actual customer emails, meetings, and MSX pipeline data. Use when user asks for territory insights, leadership update, quarterly review, customer insights, Q3/Q4 update, what are customers saying, GitHub App Dev Azure AI insights, accounts to call, SE activity insights, or to validate ACR milestone claims."
 metadata:
-  version: "2.0.0"
+  version: "2.1.0"
   author: community
   domain: Microsoft Field SE — Territory Intelligence
 user-invocable: true
@@ -20,7 +20,7 @@ Before any auto-detection or MCP calls, **start with a setup gate** so the skill
 
 **Ask the user one concise setup question first:**
 
-> "Do you want a live-only territory update from MSX + WorkIQ, or a CSV-enhanced run with local export files? If you already have the files, send the folder path or exact file paths. If not, I’ll show you where to get them first."
+> "Do you want a live-only territory update from MSX + WorkIQ, or a CSV-enhanced run with local export files? If you already have the files, send the folder path or exact file paths. If the account data does not already include territory / ATU, tell me which territory IDs to scope to before I analyze anything. If not, I’ll show you where to get the files first."
 
 ### Tell the user where optional local files come from
 
@@ -48,6 +48,17 @@ If the user wants CSV-enhanced analysis, account spotlights, or seller mapping a
 | **Outlook / Mail permissions** | Needed only if drafting the final update email | Save HTML locally instead |
 
 Do **not** assume a default workspace path or existing exports for a new seller. If files are missing, stop and explain the setup path before you start processing.
+
+### Territory-first guardrail (always enforce)
+
+Do **not** start with all accounts and then drill down later. This skill should work in the opposite direction:
+
+1. **Confirm the territory scope first** — either from the provided account data, MSX account team results, or a direct user answer
+2. **If territory is missing from the provided files, ask before proceeding**
+3. **Only rank or summarize accounts that belong to the approved territory set**
+4. For Vijay's default working set, use **`0807`, `0808`, `0909`, `0910`, `0911`** unless the user corrects it
+
+If the account data already contains territory / ATU codes, acknowledge that and continue without asking again.
 
 ## Step 1: Identity and Territory Auto-Detection
 
@@ -153,6 +164,7 @@ Values below are populated from Step 1 auto-detection:
 2. MSX Milestones:     msx-mcp-get_my_milestones        - consumption milestone pipeline
 3. MSX SE Activities:  msx-mcp-get_my_hok_activities    - HoK activity log current quarter
 4. WorkIQ Customer:    workiq-ask_work_iq               - external customer emails/meetings/Teams
+5. Sales Home / MSXi:  sales-home MCP or equivalent     - Apps + AI MoM ACR signal for already-scoped territory accounts
 ```
 
 ### Step 3: Optional CSV Analysis (when files available)
@@ -175,6 +187,44 @@ ProductDetails_[ALIAS]_YYYY_NNN.csv
 ```
 
 CSV encoding note: MSX exports use UTF-8-sig with a `sep=` header row. The validation snippet below handles both automatically.
+
+### Step 3B: Sales Home / MSXi ACR prioritization (optional but highly actionable)
+
+Use the **Sales Home / MSXi consumption data only after the territory is already known**. Do not use it as a global all-account discovery pass.
+
+**Preferred flow:**
+
+1. Start from the territory account list discovered in Step 1 or from the provided mapping file
+2. Restrict the analysis to the requested territory IDs (for Vijay by default: `0807`, `0808`, `0909`, `0910`, `0911`)
+3. Pull the **Apps + AI growth signal** for those accounts only
+
+**Most useful Sales Home / MSXi fields:**
+
+| Source | Field / Measure | Why it matters |
+|--------|------------------|----------------|
+| `AccountAzureServiceBilling` | `Account Last Month ACR` | Current run-rate ACR for the account |
+| `AccountAzureServiceBilling` | `Account MOM $` | Absolute growth / decline vs previous month |
+| `AccountAzureServiceBilling` | `Account MOM %` | Growth rate signal |
+| `AggregatedAzureServiceBilling` | `PreCreditAzureConsumedRevenue` | Raw billed-consumption signal |
+| `AggregatedAzureServiceBilling` | `AvgDailyAcr` | Useful normalization when month is partial |
+| `StrategicPillar` | `Strategic Pillar`, `Data And AI Flag` | Bucket the signal into Apps or AI |
+| `ServiceHierarchy` | `WorkLoadName` | Gives the actual workload to pitch against |
+
+**Treat these as the default buckets for actioning calls:**
+
+- **Apps:** `App Platform Services`, `Container Services`, `Developer Services and Platform`, `Integration Services`, `GitHub Copilot`
+- **AI / Data:** `Azure OpenAI`, `Databricks`, `Fabric F SKU`, `Modern DBs`, `Azure SQL Core`, `Rest of Azure AI`, `Copilot Studio Platform`
+
+**Output columns to surface in the final report or HTML brief:**
+
+`Account | TPID | Territory | Bucket | Top Workload | Current ACR | Prior ACR | Delta $ | Delta % | 3M trend | Open opp / milestone | Suggested next call`
+
+**Ranking guidance:**
+
+1. Filter out tiny / noisy accounts first
+2. Rank by **Delta $** first, then **Delta %**
+3. Boost accounts with no active opp but strong Apps / AI growth
+4. Use WorkIQ + MSX to turn the growth signal into an actual seller action
 
 ### WorkIQ Query Strategy (send two queries in parallel)
 

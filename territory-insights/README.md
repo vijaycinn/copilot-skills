@@ -1,6 +1,6 @@
 # territory-insights
 
-> **Copilot CLI Skill** | v2.0.0 | Domain: Microsoft Field SE — Territory Intelligence
+> **Copilot CLI Skill** | v2.1.0 | Domain: Microsoft Field SE — Territory Intelligence
 
 Generates a **fully-grounded quarterly territory leadership update** for any Microsoft field SE by orchestrating **MSX MCP** + **WorkIQ MCP** + optional local CSV analysis. Auto-detects your identity and territory — no manual config required.
 
@@ -15,10 +15,10 @@ territory-insights
 ```
 
 That's it. The skill will:
-1. Ask whether you want a **live-only** run or a **CSV-enhanced** run, and prompt for file paths if applicable
+1. Ask whether you want a **live-only** run or a **CSV-enhanced** run, and confirm the territory scope if it is not already present in the data
 2. Detect your name, segment, and account list from MSX + M365
 3. Ask you to confirm (or correct) before pulling data
-4. Pull pipeline, milestones, HoK activities, and customer communications in parallel
+4. Pull pipeline, milestones, HoK activities, customer communications, and optional Sales Home ACR signal in parallel
 5. Generate and save an HTML report to your chosen output folder
 6. Auto-open in your browser — copy-paste into Outlook
 
@@ -31,6 +31,7 @@ That's it. The skill will:
 | GitHub Copilot CLI | latest | `gh extension install github/gh-copilot` |
 | MSX MCP Server | — | Microsoft internal — required for pipeline/milestone data |
 | WorkIQ MCP Server | — | Microsoft internal — required for customer email/meeting data |
+| Sales Home MCP (`sales-home`) | — | Optional — useful for territory-scoped MoM Apps + AI ACR prioritization |
 | Python | 3.8+ | Optional — only needed for CSV ACR validation |
 
 > **Network:** Must be on Microsoft corporate network or VPN for MSX and WorkIQ MCP access.
@@ -38,6 +39,8 @@ That's it. The skill will:
 > **Optional local files for deeper validation:**  
 > - Seller mapping / sales team export from the **Seller Success Dashboard** relevant Sales Team tab  
 > - Performance exports from **MSX → Earnings → Performance Summary → Account Report**
+>
+> **Territory-first note:** If the provided account data does not already include territory / ATU, the skill should ask for the territory IDs up front before any account-wide analysis. For Vijay's default config, use `0807`, `0808`, `0909`, `0910`, `0911` unless corrected.
 
 ---
 
@@ -86,6 +89,19 @@ territory-insights   Generates quarterly territory leadership updates...
 
 ---
 
+## Optional: Sales Home / MSXi prioritization layer
+
+If the `sales-home` MCP is configured, `territory-insights` can use it as a **signal layer** for accounts already inside your territory scope:
+
+- identify **growing Apps + AI ACR** accounts
+- show **current month vs prior month** trend
+- highlight the **top workload** driving the growth
+- tee up a seller action such as App Modernization, Azure AI Foundry, or GitHub Copilot follow-up
+
+Use it to prioritize **which territory accounts to call**, not to do a global all-territory scan first.
+
+---
+
 ## Optional: Personal Config
 
 Create `my-config.md` in this folder (it's `.gitignore`-d so it won't be committed) to speed up corrections during Step 1 auto-detection. Use the template below:
@@ -104,7 +120,7 @@ Create `my-config.md` in this folder (it's `.gitignore`-d so it won't be committ
 |-------|-------|
 | Segment | SMECC / ENT / SMC |
 | Sub-segment | e.g., US Public Sector SLG / Commercial / Healthcare |
-| ATU Codes | e.g., Industry.SMECC.USPS.0807 |
+| ATU Codes | e.g., Industry.SMECC.USPS.0807, Industry.SMECC.USPS.0808, Industry.SMECC.USPS.0909, Industry.SMECC.USPS.0910, Industry.SMECC.USPS.0911 |
 
 ## Workspace Path (CSV exports)
 C:\your\workspace\path\

@@ -343,6 +343,18 @@ def extract_territory_code(raw_territory: str) -> str:
     return matches[-1] if matches else text
 
 
+def normalize_territories(territories: List[str]) -> List[str]:
+    """Normalize and de-duplicate requested territory identifiers."""
+    cleaned = []
+    seen = set()
+    for territory in territories:
+        code = extract_territory_code(territory)
+        if code and code not in seen:
+            cleaned.append(code)
+            seen.add(code)
+    return cleaned
+
+
 def build_account_map(account_rows: List[Dict], territories: List[str]) -> Dict[str, Dict]:
     """
     Build a map of TPID → account metadata, filtering to the target territories.
@@ -357,6 +369,12 @@ def build_account_map(account_rows: List[Dict], territories: List[str]) -> Dict[
     territory_col = next(
         (h for h in headers if "territory" in h.lower() and "id" in h.lower()), None
     ) or next((h for h in headers if "territory" in h.lower()), None)
+
+    if territories and not territory_col:
+        raise ValueError(
+            "The account alignment file does not contain a territory / ATU column. "
+            "Provide a mapping export that includes territory scope before running territory analysis."
+        )
 
     # Auto-detect TPID column
     tpid_col = next((h for h in headers if "tpid" in h.lower()), None)
@@ -529,10 +547,20 @@ def main():
         "--territories",
         nargs="+",
         default=[],
-        help="Territory IDs to filter to (e.g., 0807 0808 0909)",
+        help="Territory IDs to filter to (required, e.g., 0807 0808 0909)",
     )
     parser.add_argument("--output", default="ssp_account_analysis.json", help="Output JSON path")
     args = parser.parse_args()
+
+    args.territories = normalize_territories(args.territories)
+    if not args.territories:
+        print(
+            "ERROR: Territory IDs are required. This script intentionally fails closed so it "
+            "does not analyze accounts outside your approved territory scope.\n"
+            "Re-run with --territories 0807 0808 0909 0910 0911 (or your own territory IDs).",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
     # Load performance data
     print(f"Loading performance CSV: {args.csv}")
@@ -555,10 +583,34 @@ def main():
         print(f"Loading account alignment CSV: {args.account_csv}")
         account_rows = load_account_csv(args.account_csv)
     else:
-        print("WARNING: No account alignment file provided. Territory/SSP fields will be empty.")
+        print(
+            "ERROR: An account alignment file is required for territory-first analysis. "
+            "Provide --xlsx or --account-csv so the script can restrict to your territory accounts.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
-    account_map = build_account_map(account_rows, args.territories)
+    if not account_rows:
+        print(
+            "ERROR: The account alignment file was empty. Export a fresh seller mapping file and re-run.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    try:
+        account_map = build_account_map(account_rows, args.territories)
+    except ValueError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        sys.exit(1)
+
     print(f"  {len(account_map)} accounts in alignment map (territories: {args.territories})")
+    if not account_map:
+        print(
+            "ERROR: No accounts matched the requested territories. Confirm the territory IDs and "
+            "the alignment export before re-running.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
     # Compute metrics
     print(f"Computing metrics for bucket: {args.bucket}")
@@ -568,6 +620,13 @@ def main():
     if account_map and args.territories:
         results = [r for r in results if r["territory"]]
         print(f"  {len(results)} accounts after territory filter")
+        if not results:
+            print(
+                "ERROR: Territory filtering removed all accounts. Confirm that the performance export "
+                "and alignment file cover the same scoped accounts.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
 
     # Output
     output = {

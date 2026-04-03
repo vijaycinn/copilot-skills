@@ -13,6 +13,7 @@ Every account spotlight must include:
 3. **MSX Milestone pipeline** — labeled clearly as projections/forward estimates for `$NEXT_QUARTER`
 4. **Primary contact** (if available from WorkIQ)
 5. **`$NEXT_QUARTER` priority action** — specific, actionable, one sentence
+6. **Optional Sales Home / MSXi ACR signal** — if available, show current vs prior month trend and the workload driving it
 
 ---
 
@@ -36,6 +37,8 @@ Every account spotlight must include:
 - **Total committed: $X,XXX/mo** | **Total upside: $X,XXX/mo**
 
 **Key contacts:** [Names from WorkIQ if available]
+
+**Sales Home / MSXi signal (optional):** [Current ACR] vs [Prior ACR] | [Delta $] | [Delta %] | Driver: [Top workload]
 
 **$NEXT_QUARTER action:** [One specific, actionable next step]
 ```
@@ -66,6 +69,7 @@ Before publishing any account spotlight, verify:
 - [ ] The two figures are clearly labeled separately (actual vs. projection)
 - [ ] "Consumed Recurring" MSX field is NOT used as a monthly consumption figure
 - [ ] Final month of the quarter is labeled as partial month with asterisk
+- [ ] If Sales Home / MSXi is cited, it is labeled as a MoM trend signal, not customer/team attribution
 
 ---
 

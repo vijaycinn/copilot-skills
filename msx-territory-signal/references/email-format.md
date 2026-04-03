@@ -44,6 +44,18 @@ tr:nth-child(even) { background: #f5f8fc; }
 
 ---
 
+## Optional Sales Home / MSXi Signal Overlay
+
+If `sales-home` is available, add a compact trend field for each account:
+
+- **Sales Signal:** `Protect`, `Grow`, or `Recover`
+- **MoM ACR trend:** `[Current ACR] vs [Prior ACR] | Delta $ | Delta %`
+- **Top workload:** the Apps or AI workload driving the change
+
+Use this only for accounts already scoped to the approved territory set. It should sharpen the outreach recommendation, not replace the WorkIQ or MSX context.
+
+---
+
 ## Full Template
 
 ```html

@@ -55,6 +55,10 @@ The skill now calls these out before processing starts:
 
 If those dependencies are missing, the skill falls back to local-file analysis or HTML-only output where possible.
 
+**Territory-first rule:** if the account file does not already include territory / ATU, the skill should ask for the territory IDs first and only analyze that scope. For Vijay's default set, that means `0807`, `0808`, `0909`, `0910`, `0911` unless corrected.
+
+**Optional Sales Home layer:** if `sales-home` is configured, use it only to rank accounts already inside that territory set by **Apps + AI MoM ACR growth**.
+
 ---
 
 ## Quick start

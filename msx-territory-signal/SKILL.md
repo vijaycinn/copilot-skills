@@ -13,7 +13,7 @@ Before doing any analysis, **always pause and ask the user for setup details**. 
 
 **Start with this question:**
 
-> "Do you already have your MSX performance export and your account-to-seller mapping file locally? If yes, send me the folder path or the two exact file paths. If not, I’ll show you where to get them first."
+> "Do you already have your MSX performance export and your account-to-seller mapping file locally? If yes, send me the folder path or the two exact file paths. If the account data does not already include territory / ATU, tell me which territory IDs to scope to before I analyze anything. If not, I’ll show you where to get the files first."
 
 ### Required runtime inputs to confirm up front
 
@@ -46,6 +46,18 @@ Before doing any analysis, **always pause and ask the user for setup details**. 
 - **WorkIQ Mail / Outlook draft permissions** — needed only if the user wants drafts created automatically
 
 If any of the above are missing, **call it out before processing starts** and tell the user what fallback exists (for example: live analysis only, or export the mapping file as CSV instead of XLSX).
+
+### Territory-first guardrail
+
+Do **not** analyze all accounts first and only later try to narrow to a seller's patch.
+
+Always:
+
+1. confirm the territory IDs up front if they are not already present in the files
+2. filter the account mapping file to the approved territory set immediately
+3. only then rank the accounts inside that territory
+
+For Vijay's default motion, use **`0807`, `0808`, `0909`, `0910`, `0911`** unless the user corrects the list.
 
 ## What You Need
 
@@ -113,6 +125,24 @@ For chatter accounts and top momentum accounts, check:
 - Open opportunities (`get_account_opportunities`)
 - EA renewal dates (look in opportunity details for `estimatedclosedate`)
 - Whether you're on the deal team (shows ownership and co-sell angle)
+
+### Step 3B: Optional Sales Home / MSXi ACR growth signal
+
+If the `sales-home` MCP is available, use it only for the already-scoped territory accounts to identify **which accounts are growing in Apps or AI ACR**.
+
+**Best fields to use:**
+
+- `Account Last Month ACR`
+- `Account MOM $`
+- `Account MOM %`
+- `Strategic Pillar`
+- `ServiceHierarchy[WorkLoadName]`
+
+**Recommended output columns for each ranked account:**
+
+`Account | TPID | Territory | Bucket | Top workload | Current ACR | Prior ACR | Delta $ | Delta % | Suggested next call`
+
+This turns the skill into a seller-ready “who should my SSP / AE call next?” view instead of a raw export summary.
 
 ### Step 4: Categorize Accounts per SSP
 

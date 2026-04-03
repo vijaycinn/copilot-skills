@@ -40,6 +40,17 @@
         "Email framed for infra/ACR conversation, not AI workload onboarding",
         "At least one Outlook draft created with proper HTML formatting"
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "I have the performance CSV and seller mapping file locally, but I am not sure whether the account data already includes territory IDs. Help me run the territory signal workflow for Apps and AI.",
+      "expected_output": "Before running any analysis, the skill asks the user to confirm the territory scope if it is not already visible in the data, and does not proceed with an all-account drilldown.",
+      "files": [],
+      "expectations": [
+        "The skill asks for territory IDs before analysis when territory/ATU is missing from the provided data",
+        "The workflow does not analyze all accounts first and narrow later",
+        "Default guidance mentions Vijay's territory set 0807, 0808, 0909, 0910, 0911 unless corrected"
+      ]
     }
   ]
 }

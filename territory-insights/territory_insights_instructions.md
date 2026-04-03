@@ -1,7 +1,7 @@
 # Territory Insights Skill — User Guide
 
 > **Skill:** `territory-insights`  
-> **Version:** 2.0.0  
+> **Version:** 2.1.0  
 > **Author:** community  
 > **Audience:** Microsoft field SEs and DSEs who need to generate quarterly territory leadership updates
 
@@ -68,6 +68,7 @@ You need two MCP servers configured and authenticated in your GitHub Copilot CLI
 |-----------|---------|--------------|
 | **MSX MCP** (`msx-mcp`) | Pulls your pipeline, milestones, HoK activities, account team | Run `/mcp` and look for `msx` in the list |
 | **WorkIQ MCP** (`WorkIQ`) | Queries your M365 emails, Teams, meetings, calendar | Run `/mcp` and look for `WorkIQ` in the list |
+| **Sales Home MCP** (`sales-home`) | Optional: territory-scoped Apps + AI ACR trend signal from Sales Home / MSXi | Run `/mcp` and look for `sales-home` in the list |
 
 If either is missing, run `/mcp` in Copilot CLI and add the server. Contact your team admin for the server URL/config if needed.
 
@@ -92,6 +93,8 @@ If you do not yet have the files, use these sources:
   `https://msxinsights.microsoft.com/User/report/058a8810-081f-4e06-b43b-60d3b983ae3e?reportTab=ReportSection410832002b044d169c9a&bookmark=d1ccaaa51a0d446b5a07`
 - **Performance exports:** MSX → Earnings → Performance Summary → Account Report
 - **Optional product detail export:** MSX → Earnings → Product Details
+
+**Important guardrail:** if the provided account data does **not** already include a territory / ATU field, stop and ask the user which territories to scope to **before** doing any account analysis. For Vijay's default motion, that working set is `0807`, `0808`, `0909`, `0910`, `0911` unless the user corrects it.
 
 ### Supported Segments
 
@@ -163,12 +166,13 @@ Which accounts should I call this week?
 
 The skill will:
 1. **Ask about setup first** — live-only vs. CSV-enhanced, plus optional local file paths
-2. **Auto-detect you** — calls MSX and M365 to find your name, email, accounts, and segment
-3. **Confirm before running** — shows you what it detected and asks if you want to proceed
-4. **Pull all data** — runs MSX and WorkIQ queries in parallel
-5. **Generate the report** — produces the 8-section update
-6. **Save as HTML** — asks where to save, then opens in your browser
-7. **Draft the email** — optionally creates a draft in your Outlook (requires M365 auth)
+2. **Confirm territory scope first** — if it is not already present in the account data
+3. **Auto-detect you** — calls MSX and M365 to find your name, email, accounts, and segment
+4. **Confirm before running** — shows you what it detected and asks if you want to proceed
+5. **Pull all data** — runs MSX and WorkIQ queries in parallel
+6. **Generate the report** — produces the 8-section update
+7. **Save as HTML** — asks where to save, then opens in your browser
+8. **Draft the email** — optionally creates a draft in your Outlook (requires M365 auth)
 
 **First run takes ~2–3 minutes** (parallel MCP calls). Subsequent runs are similar if you're pulling fresh data.
 
@@ -203,6 +207,18 @@ Just correct it in your reply. For example:
 
 All downstream queries use your corrected values.
 
+### Territory-first behavior
+
+This skill should never start from **all Microsoft accounts** and then drill down.
+
+Instead:
+
+1. detect or ask for the territory / ATU scope first
+2. restrict the account set immediately
+3. only then use Sales Home / MSXi, MSX, and WorkIQ to prioritize actions
+
+If a seller mapping file or account list already contains the territory field, reuse it and do not prompt again.
+
 ### Persisting your config (optional)
 
 If you want to skip the auto-detection step on every run, create a personal config file:
@@ -236,6 +252,22 @@ Use `references/ai-foundry-accounts.md` as a template. Include your name, email,
 - Key external contacts surfaced from emails/meetings (name, title, org)
 - Blockers: compliance chains, fiscal year cycles, security approvals
 - Macro pattern: lift-and-shift → cloud-native (Bicep, microservices, event-driven)
+
+### Optional prioritization signal — Sales Home / MSXi
+
+When `sales-home` is available, use it to create a territory-scoped **“growing ACR”** shortlist before you write recommendations:
+
+- `Account Last Month ACR`
+- `Account MOM $`
+- `Account MOM %`
+- `Strategic Pillar`
+- `WorkLoadName`
+
+Recommended output columns:
+
+`Account | TPID | Territory | Bucket (Apps / AI) | Top Workload | Current ACR | Prior ACR | Delta $ | Delta % | Recommended conversation`
+
+This makes the skill much more actionable for the sales team because the result is no longer just “interesting signal” — it becomes “who should we call this week, and about what?”
 
 ### Section 4 — Azure AI and Foundry — Engagement Highlights
 The most important section for leadership. Built from WorkIQ + MSX.
