@@ -1,0 +1,45 @@
+{
+  "skill_name": "msx-territory-signal",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need SSP outreach emails for Apps & AI based on my Q3 FY26 territory data. Performance CSV is at C:\\workspace\\agency\\msx\\PerformanceSummary_AccountReport_Q3_2026.csv and the account alignment file is at C:\\workspace\\agency\\msx\\Account Sales Team ACR.xlsx. My territories are 0807/0808/0909/0910/0911. SSPs are Kassie (0909/0910/0911), MIA (0808/0910), Orlando (0807/0808). Recent account conversations: Fort Worth (Orlando, full AI Factory stack), Galveston (Orlando, Records AI PoC), Sacramento (MIA, AI Search/RAG), Dakota County (MIA, GitHub Copilot pipeline), Oregon Metro (MIA, Foundry licensing). Draft the emails and post as Outlook drafts.",
+      "expected_output": "Three properly formatted HTML Outlook drafts — one each for Kassie, MIA, and Orlando. Each email has three sections: ★ Chatter-Highlighted (chatter accounts with WorkIQ-grounded engagement narratives), 🚀 Active AI Momentum (accounts with attainment > 80%), and 🎯 Untapped Potential (accounts with zero AI actuals but high ACR). No dollar amounts — only % attainment and ACR YoY %. bodyPreview in API response shows readable text, not raw HTML tags.",
+      "files": [],
+      "expectations": [
+        "Three Outlook drafts are created (one per SSP: Kassie, MIA, Orlando)",
+        "Each email contains all three sections: Chatter-Highlighted, Active Momentum, and Untapped Potential",
+        "Email body contains percentage values (%) not dollar amounts",
+        "Fort Worth appears in Orlando's email under Chatter-Highlighted",
+        "Dakota County appears in MIA's email",
+        "The skill uses analyze_territory.py to process the CSV and XLSX",
+        "Outlook drafts use raw HTML (bodyPreview shows readable text, not tag strings)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I want to know which accounts in territories 0807 and 0808 have the most GitHub Copilot opportunity — accounts already using AI apps workloads but haven't activated GitHub Copilot yet. Use the Q3 performance data at C:\\workspace\\agency\\msx\\PerformanceSummary_AccountReport_Q3_2026.csv and account alignment at C:\\workspace\\agency\\msx\\Account Sales Team ACR.xlsx.",
+      "expected_output": "A ranked list of accounts with: active Azure AI or Build Apps consumption but zero Developer Platform & GitHub Copilot actuals, sorted by total AI actuals descending. Includes territory, current metric breakdown, and suggested GitHub Copilot outreach angle for each account.",
+      "files": [],
+      "expectations": [
+        "Output identifies accounts with AI actuals > 0 but GitHub Copilot actuals = 0",
+        "Results filtered to territories 0807 and 0808",
+        "Metric breakdown shown per account (what's active vs what's missing)",
+        "Accounts ranked by total AI actuals or ACR descending",
+        "Actionable GitHub Copilot framing provided for top accounts"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I'm an Azure Infra SE covering territories 0807 and 0808. I want to see which accounts have the strongest ACR growth this quarter and which ones have strong spend but declining trend — so my SSP can prioritize protect-and-grow vs new business conversations. My performance data is at C:\\workspace\\agency\\msx\\PerformanceSummary_AccountReport_Q3_2026.csv and account list at C:\\workspace\\agency\\msx\\Account Sales Team ACR.xlsx. Draft an outreach signal email for my SSP.",
+      "expected_output": "One outreach email (or two if separate SSPs) organized around ACR trends rather than AI attainment — strong growth accounts (protect & expand) vs high-spend declining accounts (at-risk, needs engagement). Uses Total ACR bucket for analysis. HTML draft posted to Outlook.",
+      "files": [],
+      "expectations": [
+        "Analysis uses Total ACR bucket not AI Platform & Apps",
+        "Accounts categorized by ACR growth trend (growing vs declining vs flat)",
+        "Email framed for infra/ACR conversation, not AI workload onboarding",
+        "At least one Outlook draft created with proper HTML formatting"
+      ]
+    }
+  ]
+}

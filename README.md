@@ -9,6 +9,7 @@ A collection of [GitHub Copilot CLI](https://githubnext.com/projects/copilot-cli
 | Skill | Description | Audience |
 |-------|-------------|----------|
 | [`territory-insights`](./territory-insights/) | Generates a fully-grounded quarterly territory leadership update using live MSX pipeline, milestones, HoK activities, and WorkIQ customer emails/meetings. Outputs an 8-section HTML report ready to paste into Outlook. | Field SEs / DSEs |
+| [`msx-territory-signal`](./msx-territory-signal/) | Generates SSP-ready outreach signal briefs from MSX performance exports plus seller-mapping files. Identifies chatter, momentum, and untapped accounts and can draft HTML outreach emails for Apps, AI, Infra, Data, or GitHub motions. | Field SEs / DSEs |
 | [`se-activity`](./se-activity/) | Drafts and classifies MSX SE Activity entries from meeting notes, emails, or Teams conversations. Maps work to the correct FY26 SE Task Category and MSX scope (Account / Opportunity / Milestone). | Field SEs / DSEs |
 
 _More skills coming. PRs welcome._
@@ -88,6 +89,17 @@ To create your personal config:
 ```
 copilot-skills/
 ├── README.md                          ← you are here
+├── msx-territory-signal/
+│   ├── README.md                      ← quick start + data prep guidance
+│   ├── SKILL.md                       ← skill definition (read by Copilot CLI)
+│   ├── references/
+│   │   ├── data-preparation.md        ← where to export performance + seller mapping files
+│   │   └── email-format.md            ← HTML outreach email template
+│   ├── scripts/
+│   │   ├── analyze_territory.py       ← CSV/XLSX → SSP account analysis JSON
+│   │   └── read_account_xlsx.py       ← Excel automation helper for account mapping
+│   └── evals/
+│       └── evals.json                 ← example prompts / expected outcomes
 ├── territory-insights/
 │   ├── README.md                      ← quick start + install
 │   ├── SKILL.md                       ← skill definition (read by Copilot CLI)

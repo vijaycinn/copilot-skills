@@ -30,11 +30,12 @@
 
 `territory-insights` generates a **quarterly territory leadership update** for Microsoft field SEs. It works by:
 
-1. **Auto-detecting your identity** from MSX and M365 (no config required on first run)
-2. **Pulling live data** from MSX (pipeline, milestones, HoK activities) via MSX MCP
-3. **Surfacing customer voice** from your emails, Teams messages, and meeting transcripts via WorkIQ
-4. **Optionally analyzing CSV exports** from MSX for ACR actuals and quota attainment
-5. **Producing an 8-section HTML report** ready to paste into Outlook for leadership
+1. **Checking your environment and optional file setup** (live-only vs. CSV-enhanced run)
+2. **Auto-detecting your identity** from MSX and M365
+3. **Pulling live data** from MSX (pipeline, milestones, HoK activities) via MSX MCP
+4. **Surfacing customer voice** from your emails, Teams messages, and meeting transcripts via WorkIQ
+5. **Optionally analyzing CSV exports** from MSX for ACR actuals and quota attainment
+6. **Producing an 8-section HTML report** ready to paste into Outlook for leadership
 
 ### What it covers
 
@@ -76,6 +77,21 @@ For ACR validation and detailed attainment analysis:
 
 - **Python 3.8+** installed and on PATH
 - **MSX CSV exports** downloaded from the MSX reporting portal (see [Optional CSV Analysis](#optional-csv-analysis))
+- **Optional seller mapping export** from the **Seller Success Dashboard** Sales Team tab when you want SSP / AE / DSE ownership called out in the report
+
+### First-run setup note for new SEs / new territories
+
+If this is a brand-new setup, the skill should stop and ask whether you want:
+
+1. a **live-only run** using MSX MCP + WorkIQ, or  
+2. a **CSV-enhanced run** where you also provide local file paths.
+
+If you do not yet have the files, use these sources:
+
+- **Seller mapping / sales team roster:** Seller Success Dashboard → Sales Team tab  
+  `https://msxinsights.microsoft.com/User/report/058a8810-081f-4e06-b43b-60d3b983ae3e?reportTab=ReportSection410832002b044d169c9a&bookmark=d1ccaaa51a0d446b5a07`
+- **Performance exports:** MSX → Earnings → Performance Summary → Account Report
+- **Optional product detail export:** MSX → Earnings → Product Details
 
 ### Supported Segments
 
@@ -146,12 +162,13 @@ Which accounts should I call this week?
 ```
 
 The skill will:
-1. **Auto-detect you** — calls MSX and M365 to find your name, email, accounts, and segment
-2. **Confirm before running** — shows you what it detected and asks if you want to proceed
-3. **Pull all data** — runs MSX and WorkIQ queries in parallel
-4. **Generate the report** — produces the 8-section update
-5. **Save as HTML** — asks where to save, then opens in your browser
-6. **Draft the email** — optionally creates a draft in your Outlook (requires M365 auth)
+1. **Ask about setup first** — live-only vs. CSV-enhanced, plus optional local file paths
+2. **Auto-detect you** — calls MSX and M365 to find your name, email, accounts, and segment
+3. **Confirm before running** — shows you what it detected and asks if you want to proceed
+4. **Pull all data** — runs MSX and WorkIQ queries in parallel
+5. **Generate the report** — produces the 8-section update
+6. **Save as HTML** — asks where to save, then opens in your browser
+7. **Draft the email** — optionally creates a draft in your Outlook (requires M365 auth)
 
 **First run takes ~2–3 minutes** (parallel MCP calls). Subsequent runs are similar if you're pulling fresh data.
 
@@ -402,7 +419,7 @@ Q[N] FY[YY] Territory Insights — Leadership Update | [SEGMENT] | [Your Name]
 **Cause:** Wrong workspace path, or CSV has `sep=` header / UTF-8 BOM.  
 **Fix:** Verify the folder path contains the CSV files. The skill strips `sep=` headers and UTF-8 BOM automatically — if the error persists, check that the CSV was not re-saved from Excel (which corrupts encoding).
 
-### "Wrong identity detected in Step 0"
+### "Wrong identity detected in Step 1"
 
 **Cause:** Multiple M365 profiles or wrong MSX account team.  
 **Fix:** When the skill shows you the detected identity, simply correct it in your reply. E.g., "Yes, but my segment is ENT not SMECC."

@@ -14,7 +14,42 @@ Orchestrates MSX MCP + WorkIQ MCP + optional local CSV analysis to generate a fu
 
 ---
 
-## Step 0: Identity and Territory Auto-Detection (Always Run First)
+## Step 0: Environment, Dependencies, and Optional File Setup (Always Run First)
+
+Before any auto-detection or MCP calls, **start with a setup gate** so the skill works for a new SE, a different territory, or a fresh machine.
+
+**Ask the user one concise setup question first:**
+
+> "Do you want a live-only territory update from MSX + WorkIQ, or a CSV-enhanced run with local export files? If you already have the files, send the folder path or exact file paths. If not, I’ll show you where to get them first."
+
+### Tell the user where optional local files come from
+
+If the user wants CSV-enhanced analysis, account spotlights, or seller mapping and they do **not** already have the files, explain:
+
+1. **Account-to-seller mapping (SSP / AE / DSE / CE)**  
+   Get this from the **Seller Success Dashboard** → relevant **Sales Team** tab for the territory:  
+   `https://msxinsights.microsoft.com/User/report/058a8810-081f-4e06-b43b-60d3b983ae3e?reportTab=ReportSection410832002b044d169c9a&bookmark=d1ccaaa51a0d446b5a07`
+
+2. **Performance CSVs / attainment exports**  
+   Export from **MSX → Earnings → Performance Summary → Account Report** (and optionally Product Details if deeper metric validation is needed).
+
+3. **Workspace folder path**  
+   Ask the user for the local folder containing the exports if they want inline CSV validation or HTML output saved to a specific location.
+
+### Dependencies that may vary by user environment — call these out before proceeding
+
+| Dependency | Why it matters | Fallback |
+|------------|----------------|----------|
+| **MSX MCP access** | Needed for account team, deals, milestones, HoK | Use local exports only if MSX access is missing |
+| **WorkIQ MCP access + accepted EULA** | Needed for customer email / Teams / meeting grounding | Skip customer-voice sections if unavailable |
+| **Corporate network / VPN** | Often required for Microsoft internal data sources | Reconnect before continuing |
+| **Python 3.8+** | Needed for optional CSV/ACR validation | Run live-only mode if unavailable |
+| **Excel installed or CSV export available** | Some XLSX exports need Excel automation on Windows | Ask the user to re-save/export as CSV |
+| **Outlook / Mail permissions** | Needed only if drafting the final update email | Save HTML locally instead |
+
+Do **not** assume a default workspace path or existing exports for a new seller. If files are missing, stop and explain the setup path before you start processing.
+
+## Step 1: Identity and Territory Auto-Detection
 
 Run BOTH calls in parallel before doing anything else:
 
@@ -72,7 +107,7 @@ Store all resolved values as `$SELLER_NAME`, `$SELLER_EMAIL`, `$SELLER_ALIAS`, `
 
 ## Territory Context (Populated at Runtime)
 
-Values below are populated from Step 0 auto-detection:
+Values below are populated from Step 1 auto-detection:
 
 - **Seller:** `$SELLER_NAME` (`$SELLER_EMAIL`) — `$SELLER_ROLE`
 - **Segment:** `$SEGMENT`
@@ -101,7 +136,7 @@ Values below are populated from Step 0 auto-detection:
 - User asks to "summarize SE activities" or "summarize MSX milestones"
 - User asks to validate an ACR claim, milestone value, or attainment figure
 - User shares CSV files (optionally use alongside msx-perf-analyzer for detailed scorecard)
-- User asks about specific accounts in their territory (accounts list discovered from MSX in Step 0)
+- User asks about specific accounts in their territory (accounts list discovered from MSX in Step 1)
 
 **Anti-triggers - do NOT use this skill when:**
 - User wants to LOG activities into MSX (use se-activity skill instead)
@@ -111,7 +146,7 @@ Values below are populated from Step 0 auto-detection:
 
 ## Data Sources and MCP Tools
 
-### Step 1: Run all pulls IN PARALLEL
+### Step 2: Run all pulls IN PARALLEL
 
 ```
 1. MSX Pipeline:       msx-mcp-get_my_deals             - open opportunities
@@ -120,7 +155,7 @@ Values below are populated from Step 0 auto-detection:
 4. WorkIQ Customer:    workiq-ask_work_iq               - external customer emails/meetings/Teams
 ```
 
-### Step 2: Optional CSV Analysis (when files available)
+### Step 3: Optional CSV Analysis (when files available)
 
 CSV files from MSX exports provide actual billed ACR and quota attainment data that MSX pipeline data alone cannot supply.
 
@@ -382,7 +417,7 @@ Workaround: Use HTML file fallback. Retry mail after 5-10 minutes. Never block o
 
 ## Key Accounts Quick Reference
 
-This table is built dynamically at runtime from MSX `get_account_team` data (Step 0) and WorkIQ findings.
+This table is built dynamically at runtime from MSX `get_account_team` data (Step 1) and WorkIQ findings.
 
 | Account | State | AI Theme | MSX Opp | Stage | Priority |
 |---------|-------|----------|---------|-------|----------|
@@ -396,13 +431,13 @@ To pre-populate this table for your territory, see `references/account-spotlight
 
 | User request | Actions |
 |-------------|---------|
-| "Full quarterly update" | Step 0 auto-detect → Run all 4 MCP pulls in parallel + 2 WorkIQ queries → generate all 8 sections + HTML output |
+| "Full quarterly update" | Step 0 setup gate → Step 1 auto-detect → Run all 4 MCP pulls in parallel + 2 WorkIQ queries → generate all 8 sections + HTML output |
 | "What are customers saying about AI?" | WorkIQ AI query only → Section 4 expanded |
 | "Which accounts should I call?" | MSX DUAL-MISS analysis (from milestones + pipeline) → Section 7 spotlights; suggest msx-perf-analyzer for quota-weighted call sheet |
 | "Validate this ACR claim for [account]" | Ask for workspace path → Python CSV query → compare to MSX milestones → provide corrected statement |
 | "Add [account] to the AI section" | WorkIQ query for that account AI discussions → expand Section 4 |
 | "Update the email draft" | Ask for output path → Regenerate HTML → open in browser → user copies |
-| "Who am I?" / "What's my territory?" | Run Step 0 auto-detection and display results |
+| "Who am I?" / "What's my territory?" | Run the Step 0 setup check and Step 1 auto-detection, then display results |
 
 ---
 
@@ -437,7 +472,7 @@ Fix: Try alternate name formats:
 - With state prefix: `"IL-City of Springfield"`
 - Topic-first: `"cloud migration meeting"` instead of account-first queries
 
-### Step 0 auto-detection returns wrong identity
+### Step 1 auto-detection returns wrong identity
 Cause: Multiple MSX profiles or shared machine
 Fix: User provides corrections directly in response to the confirmation prompt
      All downstream queries use the corrected values from that point forward

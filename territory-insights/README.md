@@ -15,11 +15,12 @@ territory-insights
 ```
 
 That's it. The skill will:
-1. Detect your name, segment, and account list from MSX + M365
-2. Ask you to confirm (or correct) before pulling data
-3. Pull pipeline, milestones, HoK activities, and customer communications in parallel
-4. Generate and save an HTML report to your chosen output folder
-5. Auto-open in your browser — copy-paste into Outlook
+1. Ask whether you want a **live-only** run or a **CSV-enhanced** run, and prompt for file paths if applicable
+2. Detect your name, segment, and account list from MSX + M365
+3. Ask you to confirm (or correct) before pulling data
+4. Pull pipeline, milestones, HoK activities, and customer communications in parallel
+5. Generate and save an HTML report to your chosen output folder
+6. Auto-open in your browser — copy-paste into Outlook
 
 ---
 
@@ -33,6 +34,10 @@ That's it. The skill will:
 | Python | 3.8+ | Optional — only needed for CSV ACR validation |
 
 > **Network:** Must be on Microsoft corporate network or VPN for MSX and WorkIQ MCP access.
+>
+> **Optional local files for deeper validation:**  
+> - Seller mapping / sales team export from the **Seller Success Dashboard** relevant Sales Team tab  
+> - Performance exports from **MSX → Earnings → Performance Summary → Account Report**
 
 ---
 
@@ -83,7 +88,7 @@ territory-insights   Generates quarterly territory leadership updates...
 
 ## Optional: Personal Config
 
-Create `my-config.md` in this folder (it's `.gitignore`-d so it won't be committed) to speed up corrections during Step 0 auto-detection. Use the template below:
+Create `my-config.md` in this folder (it's `.gitignore`-d so it won't be committed) to speed up corrections during Step 1 auto-detection. Use the template below:
 
 ```markdown
 ## Identity
@@ -158,4 +163,4 @@ The skill ships with generic defaults that work for any segment. Section 6 macro
 | SMC | Same as ENT; Section 7 spotlights may need threshold adjustments |
 | Healthcare | SLG patterns carry over; add HIPAA compliance notes to macro themes |
 
-Step 0 auto-detection adapts to your segment automatically. Only the Section 6 default themes need manual tuning.
+The Step 0 setup gate plus Step 1 auto-detection adapt to your segment automatically. Only the Section 6 default themes need manual tuning.

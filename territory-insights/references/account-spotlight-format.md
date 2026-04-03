@@ -40,7 +40,7 @@ Every account spotlight must include:
 **$NEXT_QUARTER action:** [One specific, actionable next step]
 ```
 
-> **Month names:** Use the actual calendar months for `$FISCAL_QUARTER`. Reference the quarter-months table in SKILL.md Step 0 (Q1=Jul/Aug/Sep, Q2=Oct/Nov/Dec, Q3=Jan/Feb/Mar, Q4=Apr/May/Jun).
+> **Month names:** Use the actual calendar months for `$FISCAL_QUARTER`. Reference the quarter-months table in `SKILL.md` (Q1=Jul/Aug/Sep, Q2=Oct/Nov/Dec, Q3=Jan/Feb/Mar, Q4=Apr/May/Jun).
 
 ---
 
